@@ -1,8 +1,2 @@
 token.txt
-*.swp
-php/
-php.zip
-python/
-python.zip
-get-pip.py
-.vagrant
+desktop.ini
