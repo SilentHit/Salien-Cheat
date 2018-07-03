@@ -107,6 +107,19 @@ $LastKnownPlanet = 0;
 $BestPlanetAndZone = 0;
 $HasReachedMaxLevel = 0;
 
+$PreferredPlanet = -1;
+$PreferredZone = -1;
+
+if( isset( $_SERVER[ 'PREFERED_PLANET' ] ) )
+{
+	$PreferredPlanet = (int)$_SERVER[ 'PREFERED_PLANET' ];
+}
+
+if( isset( $_SERVER[ 'PREFERED_ZONE' ] ) )
+{
+	$PreferredZone = (int)$_SERVER[ 'PREFERED_ZONE' ];
+}
+
 if( ini_get( 'precision' ) < 18 )
 {
 	Msg( '{teal}Fixed php float precision (was ' . ini_get( 'precision' ) . ')' );
@@ -732,6 +745,8 @@ bossLabel:
 
 function GetBestPlanetAndZone( $HasReachedMaxLevel, $WaitTime, $FailSleep )
 {
+	global $PreferredPlanet;
+	
 	$Planets = SendGET( 'ITerritoryControlMinigameService/GetPlanets', 'active_only=1&language=english' );
 
 	CheckGameVersion( $Planets );
@@ -853,6 +868,17 @@ function GetBestPlanetAndZone( $HasReachedMaxLevel, $WaitTime, $FailSleep )
 	} );
 
 	$Planet = $Planets[ 0 ];
+	
+	if( $PreferredPlanet >= 0 )
+	{
+		foreach( $Planets as $plan )
+		{
+			if( $plan['id'] == $PreferredPlanet )
+			{
+				$Planet = $plan;
+			}
+		}
+	}
 
 	Msg(
 		'>> Next Zone is {yellow}' . $Planet[ 'best_zone' ][ 'zone_position' ] .
