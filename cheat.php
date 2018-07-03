@@ -24,24 +24,24 @@ if( !file_exists( __DIR__ . '/cacert.pem' ) )
 // Pass env ACCOUNTID, get it from salien page source code called 'gAccountID'
 $AccountID = isset( $_SERVER[ 'ACCOUNTID' ] ) ? (int)$_SERVER[ 'ACCOUNTID' ] : 0;
 
-if( $argc > 1 )
-{
-	$Token = $argv[ 1 ];
-
-	if( $argc > 2 )
-	{
-		$AccountID = $argv[ 2 ];
-	}
-}
-else if( isset( $_SERVER[ 'TOKEN' ] ) )
+if( isset( $_SERVER[ 'TOKEN' ] ) )
 {
 	// if the token was provided as an env var, use it
 	$Token = $_SERVER[ 'TOKEN' ];
 }
 else
 {
-	// otherwise, read it from disk
-	$Token = trim( file_get_contents( __DIR__ . '/token.txt' ) );
+	if( $argc > 1 )
+	{
+		// read from arguments
+		$Token = trim( file_get_contents( $argv[ 1 ] ) );
+	}
+	else
+	{
+		// otherwise, read it from disk
+		$Token = trim( file_get_contents( __DIR__ . '/token.txt' ) );
+	}
+	
 	$ParsedToken = json_decode( $Token, true );
 
 	if( is_string( $ParsedToken ) )
