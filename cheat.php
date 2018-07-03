@@ -632,6 +632,8 @@ function GetNameForDifficulty( $Zone )
 
 function GetPlanetState( $Planet, $HasReachedMaxLevel, $WaitTime )
 {
+	global $PreferredZone;
+	
 	$Zones = SendGET( 'ITerritoryControlMinigameService/GetPlanet', 'id=' . $Planet . '&language=english' );
 
 	if( empty( $Zones[ 'response' ][ 'planets' ][ 0 ][ 'zones' ] ) )
@@ -733,13 +735,26 @@ function GetPlanetState( $Planet, $HasReachedMaxLevel, $WaitTime )
 			return $b[ 'difficulty' ] - $a[ 'difficulty' ];
 		} );
 	}
+	
+	$SelectedZone = $CleanZones[ 0 ];
+	
+	if( $PreferredZone >= 0 )
+	{
+		foreach( $CleanZones as $key => $Zone )
+		{
+			if( $Zone['zone_position'] == $PreferredZone )
+			{
+				$SelectedZone = $CleanZones[ $key ];
+			}
+		}
+	}
 
 bossLabel:
 	return [
 		'high_zones' => $HighZones,
 		'medium_zones' => $MediumZones,
 		'low_zones' => $LowZones,
-		'best_zone' => $CleanZones[ 0 ],
+		'best_zone' => $SelectedZone,
 	];
 }
 
