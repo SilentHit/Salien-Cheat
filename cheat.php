@@ -99,13 +99,6 @@ if( isset( $_SERVER[ 'DISABLE_COLORS' ] ) )
 	$DisableColors = (bool)$_SERVER[ 'DISABLE_COLORS' ];
 }
 
-$GameVersion = 2;
-$WaitTime = 110;
-$FailSleep = 3;
-$OldScore = 0;
-$LastKnownPlanet = 0;
-$BestPlanetAndZone = 0;
-
 $PreferredPlanet = -1;
 $PreferredZone = -1;
 
@@ -118,6 +111,20 @@ if( isset( $_SERVER[ 'PREFERED_ZONE' ] ) )
 {
 	$PreferredZone = (int)$_SERVER[ 'PREFERED_ZONE' ];
 }
+
+$IgnoreBoss = true;
+
+if( isset( $_SERVER[ 'IGNORE_BOSS' ] ) )
+{
+	$IgnoreBoss = (bool)$_SERVER[ 'IGNORE_BOSS' ];
+}
+
+$GameVersion = 2;
+$WaitTime = 110;
+$FailSleep = 3;
+$OldScore = 0;
+$LastKnownPlanet = 0;
+$BestPlanetAndZone = 0;
 
 if( ini_get( 'precision' ) < 18 )
 {
@@ -612,6 +619,7 @@ function GetNameForDifficulty( $Zone )
 function GetPlanetState( $Planet, $WaitTime )
 {
 	global $PreferredZone;
+	global $IgnoreBoss;
 	
 	$Zones = SendGET( 'ITerritoryControlMinigameService/GetPlanet', 'id=' . $Planet . '&language=english' );
 
@@ -645,7 +653,7 @@ function GetPlanetState( $Planet, $WaitTime )
 		}
 
 		// Store boss zone separately to ensure it has priority later
-		if( $Zone[ 'type' ] == 4 && $Zone[ 'boss_active' ] )
+		if( $Zone[ 'type' ] == 4 && $Zone[ 'boss_active' ] && !$IgnoreBoss  )
 		{
 			$BossZones[] = $Zone;
 		}
